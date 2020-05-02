@@ -5,13 +5,15 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import utils.DocumentExtractor;
 import utils.PDFFilter;
 
 public class Collection implements Iterable<Document>{
 
-	private List<Document> collection;
+	private Set<Document> collection;
 	private File folder;
 	private List<BagOfWords> bagCollection;
 	private int size;
@@ -19,8 +21,8 @@ public class Collection implements Iterable<Document>{
 
 	public Collection(String path) throws IOException {
 		folder = new File(path);
-		collection = new ArrayList<Document>();
-
+		collection = new TreeSet<Document>();
+		
 		DocumentExtractor extractor = new DocumentExtractor();
 		int i = 1;
 		for (File pdf : folder.listFiles(new PDFFilter())) {
@@ -41,7 +43,7 @@ public class Collection implements Iterable<Document>{
 		return bagCollection;
 	}
 	
-	public List<Document> getDocuments() {
+	public Set<Document> getDocuments() {
 		return collection;
 	}
 	
@@ -64,6 +66,7 @@ public class Collection implements Iterable<Document>{
 		return coll;
 	}
 
+	//RIMUOVERE ALLA FINE
 	public String toString(int type) {
 		String out = "";
 		int i = 1;

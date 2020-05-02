@@ -3,7 +3,7 @@ package documents;
 import java.io.File;
 
 
-public class Document {
+public class Document implements Comparable<Document>{
 
 	private String document;
 	private String name;
@@ -13,6 +13,12 @@ public class Document {
 		path = pdf.getPath();
 		name = pdf.getName();
 		document = text;
+	}
+	
+	public Document(String query) {		//constructor to build an User's query as a Document
+		path = null;
+		name = "Query";
+		document = query;
 	}
 
 	public String getDocument() {
@@ -38,5 +44,11 @@ public class Document {
 		else
 			return false;
 	}
+
+	@Override
+	public int compareTo(Document doc) {
+		return name.compareTo(doc.getName());
+	}
+
 
 }
