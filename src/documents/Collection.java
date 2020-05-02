@@ -13,6 +13,8 @@ public class Collection implements Iterable<Document>{
 
 	private List<Document> collection;
 	private File folder;
+	private List<BagOfWords> bagCollection;
+	private int size;
 
 
 	public Collection(String path) throws IOException {
@@ -26,14 +28,31 @@ public class Collection implements Iterable<Document>{
 			collection.add(extractor.getDocument(pdf));
 			i++;
 		}
+		
+		size = i - 1;
+		
+		bagCollection = new ArrayList<BagOfWords>();
+		for (Document doc : collection) {
+			bagCollection.add(new BagOfWords(doc));
+		}
 	}
-
-
+	
+	public List<BagOfWords> getBags() {
+		return bagCollection;
+	}
+	
+	public List<Document> getDocuments() {
+		return collection;
+	}
+	
+	public int getSize() {
+		return size;
+	}
+	
 	@Override
 	public Iterator<Document> iterator() {
 		return collection.iterator();
 	}
-
 
 	public String toString() {
 		String coll = "";
@@ -45,16 +64,24 @@ public class Collection implements Iterable<Document>{
 		return coll;
 	}
 
-	public String toString(String type) {
-		String coll = "";
+	public String toString(int type) {
+		String out = "";
 		int i = 1;
-		if(type.equals("documents")) {
-			for (Document doc : collection) {
-				coll = coll + i + ") " + doc.getDocument() + "\n";
-				i++;
-			}
+		switch(type) {
+			case 1:
+				for (Document doc : collection) {
+					out = out + i + ") " + doc.getDocument() + "\n";
+					i++;
+				}
+				break;
+			case 2:
+				for (BagOfWords bag : bagCollection) {
+					out = out + i + ") " + bag + "\n";
+					i++;
+				}
+				break;
 		}
-		return coll;
+		return out;
 	}
 
 
