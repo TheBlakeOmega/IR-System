@@ -1,23 +1,26 @@
 package computing;
 
-import java.util.HashMap;
+import java.util.TreeMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.lang.Math;
 
 import documents.BagOfWords;
 import documents.Collection;
 import documents.Document;
 
 public class InvertedIndex implements Iterable<String>{
-	
+
 	Map<String,PostingList> index;
+	List<String> stopWords;
 	int terms;
-	
+	int collectionSize;
+
 	public InvertedIndex (Collection coll) {
-		index = new HashMap<String,PostingList>();
+		index = new TreeMap<String,PostingList>();
 		List<BagOfWords> bags = coll.getBags();
 		for (BagOfWords bag : bags) {
 			for (String term : bag.getWords()) {
@@ -36,28 +39,26 @@ public class InvertedIndex implements Iterable<String>{
 			}
 		}
 		checkStopWords(coll);
+		collectionSize = coll.getSize();
 	}
-	
+
 	public int getTermsSize() {
 		return terms;
 	}
-	
+
 	public Set<String> getTerms() {
 		return index.keySet();
 	}
-	
+
 	public PostingList getPostingList(String term) {
 		return index.get(term);
 	}
-	
-	public int getTermOccurrence(String term, Document doc) {
-		return index.get(term).getOccurrence(doc);
-	}
-	
+
+
 	public boolean isConteined(String term, Document doc) {
 		return index.get(term).contains(doc);
 	}
-	
+
 	private void checkStopWords(Collection coll) {
 		LinkedList<String> toRemove = new LinkedList<String>();
 		for (String term : getTerms()) {
@@ -67,7 +68,13 @@ public class InvertedIndex implements Iterable<String>{
 		}
 		for (String term : toRemove) {
 			index.remove(term);
+			stopWords = new LinkedList<String>();
+			stopWords.add(term);
 		}
+	}
+
+	public List<String> getStopWords() {
+		return stopWords;
 	}
 	
 	@Override
@@ -75,6 +82,21 @@ public class InvertedIndex implements Iterable<String>{
 		return getTerms().iterator();
 	}
 	
+	public double TF_IDF(String term, Document doc) {		//I choose to divide the computation of TF-IDF weight, with another two functions, to show how to compute this weight
+		return sublinearTFScaling(term,doc) * inverseDocumentFrequency(term);
+	}
+	
+	private double inverseDocumentFrequency(String term) {		// idf = log10(collection's_size / document_frequency(term))
+		return Math.log10(collectionSize / getPostingList(term).getSize());
+	}
+
+	private double sublinearTFScaling(String term, Document doc) {		//sublinear scaling for TF = 1 + log10(term_frequency(term,document))
+		if (isConteined(term,doc)) {
+			return 1 + Math.log10(index.get(term).getOccurrence(doc));
+		}
+		return 0;
+	}
+
 	public String toString() {
 		String out = "";
 		int i = 1;
@@ -84,9 +106,7 @@ public class InvertedIndex implements Iterable<String>{
 		}
 		return out;
 	}
-
-	
-	
-	
 	
 }
+
+
