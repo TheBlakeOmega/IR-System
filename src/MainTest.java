@@ -1,7 +1,9 @@
 import java.io.IOException;
+import java.util.Map;
 
 import computing.TermDocumentMatrix;
 import documents.Collection;
+import documents.Document;
 import utils.Keyboard;
 
 public class MainTest {
@@ -16,6 +18,14 @@ public class MainTest {
 		TermDocumentMatrix matrix = new TermDocumentMatrix(coll);
 		System.out.println("Inverted Index: \n\n" + matrix.getIndex());
 		System.out.println("TF-IDF Matrix: \n\n" + matrix);
+		System.out.println("\n\nInsert Query: ");
+		matrix.buildQuery(Keyboard.readString());
+		Map<Double, Document> out = matrix.computeSimilarity();
+		int i = 1;
+		for (Double val : out.keySet()) {
+			System.out.println(i + ")  " + out.get(val) + " : " + val + "\n");
+			i++;
+		}
 		} catch(IOException e) {
 			System.out.println("Qualcosa storto");
 			e.printStackTrace();

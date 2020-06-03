@@ -53,7 +53,10 @@ public class BagOfWords {
 	}
 	
 	public int getOccurrence(String word) {
-		return bag.get(word);
+		if(bag.keySet().contains(word)) {
+			return bag.get(word);
+		}
+		return 0;
 	}
 
 	private static boolean isWord(String word) {
